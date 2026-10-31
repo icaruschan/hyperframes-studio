@@ -1,0 +1,200 @@
+[
+  {
+    "id": "w0",
+    "text": "Claude",
+    "start": 0.099,
+    "end": 0.519
+  },
+  {
+    "id": "w1",
+    "text": "just",
+    "start": 0.62,
+    "end": 0.799
+  },
+  {
+    "id": "w2",
+    "text": "dropped",
+    "start": 0.839,
+    "end": 1.139
+  },
+  {
+    "id": "w3",
+    "text": "a",
+    "start": 1.199,
+    "end": 1.219
+  },
+  {
+    "id": "w4",
+    "text": "new",
+    "start": 1.339,
+    "end": 1.5
+  },
+  {
+    "id": "w5",
+    "text": "platform",
+    "start": 1.539,
+    "end": 2.279
+  },
+  {
+    "id": "w6",
+    "text": "that",
+    "start": 2.319,
+    "end": 2.579
+  },
+  {
+    "id": "w7",
+    "text": "fundamentally",
+    "start": 2.599,
+    "end": 3.299
+  },
+  {
+    "id": "w8",
+    "text": "changes",
+    "start": 3.359,
+    "end": 3.759
+  },
+  {
+    "id": "w9",
+    "text": "how",
+    "start": 3.819,
+    "end": 3.939
+  },
+  {
+    "id": "w10",
+    "text": "we",
+    "start": 3.959,
+    "end": 4.039
+  },
+  {
+    "id": "w11",
+    "text": "do",
+    "start": 4.079,
+    "end": 4.139
+  },
+  {
+    "id": "w12",
+    "text": "design",
+    "start": 4.219,
+    "end": 4.539
+  },
+  {
+    "id": "w13",
+    "text": "work.",
+    "start": 4.599,
+    "end": 4.799
+  },
+  {
+    "id": "w14",
+    "text": "And",
+    "start": 5.139,
+    "end": 5.219
+  },
+  {
+    "id": "w15",
+    "text": "if",
+    "start": 5.259,
+    "end": 5.379
+  },
+  {
+    "id": "w16",
+    "text": "you've",
+    "start": 5.38,
+    "end": 5.519
+  },
+  {
+    "id": "w17",
+    "text": "been",
+    "start": 5.539,
+    "end": 5.699
+  },
+  {
+    "id": "w18",
+    "text": "wondering",
+    "start": 5.779,
+    "end": 6.139
+  },
+  {
+    "id": "w19",
+    "text": "why",
+    "start": 6.219,
+    "end": 6.379
+  },
+  {
+    "id": "w20",
+    "text": "tools",
+    "start": 6.519,
+    "end": 6.799
+  },
+  {
+    "id": "w21",
+    "text": "like",
+    "start": 6.859,
+    "end": 6.98
+  },
+  {
+    "id": "w22",
+    "text": "Figma",
+    "start": 7.119,
+    "end": 7.44
+  },
+  {
+    "id": "w23",
+    "text": "are",
+    "start": 7.759,
+    "end": 7.919
+  },
+  {
+    "id": "w24",
+    "text": "under",
+    "start": 7.96,
+    "end": 8.28
+  },
+  {
+    "id": "w25",
+    "text": "immense",
+    "start": 8.479,
+    "end": 8.74
+  },
+  {
+    "id": "w26",
+    "text": "pressure",
+    "start": 8.84,
+    "end": 9.119
+  },
+  {
+    "id": "w27",
+    "text": "right",
+    "start": 9.159,
+    "end": 9.3
+  },
+  {
+    "id": "w28",
+    "text": "now,",
+    "start": 9.38,
+    "end": 9.519
+  },
+  {
+    "id": "w29",
+    "text": "this",
+    "start": 9.96,
+    "end": 10.18
+  },
+  {
+    "id": "w30",
+    "text": "is",
+    "start": 10.199,
+    "end": 10.3
+  },
+  {
+    "id": "w31",
+    "text": "exactly",
+    "start": 10.34,
+    "end": 10.82
+  },
+  {
+    "id": "w32",
+    "text": "why.",
+    "start": 10.84,
+    "end": 10.979
+  }
+]

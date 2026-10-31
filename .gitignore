@@ -1,0 +1,38 @@
+# Temporary scratch & build artifacts
+.scratch/
+scratchy/node_modules/
+node_modules/
+**/node_modules/
+
+# Secrets & Credentials
+**/.env*
+*.env
+*.env.local
+*.key
+*.pem
+
+# Python & Runtime caches
+__pycache__/
+*.py[cod]
+*$py.class
+*.egg-info/
+.pytest_cache/
+.mypy_cache/
+.ruff_cache/
+.venv/
+venv/
+env/
+
+# Editor & Tool artifacts
+.openclaude/
+.codex/
+.tmp/
+*.zip
+.idea/
+.vscode/
+
+# System / OS
+Thumbs.db
+Desktop.ini
+.DS_Store
+*.tmp

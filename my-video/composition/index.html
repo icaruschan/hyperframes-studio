@@ -1,0 +1,587 @@
+<!doctype html>
+<html lang="en">
+  <head>
+    <meta charset="UTF-8" />
+    <meta name="viewport" content="width=1920, height=1080" />
+    <title>Claude Design Edit - Authoritative Sync</title>
+    <script src="https://cdn.jsdelivr.net/npm/gsap@3.14.2/dist/gsap.min.js"></script>
+    <link rel="preconnect" href="https://fonts.googleapis.com">
+    <link rel="preconnect" href="https://fonts.gstatic.com" crossorigin>
+    <link href="https://fonts.googleapis.com/css2?family=Great+Vibes&family=Inter:wght@400;500;700;800;900&display=swap" rel="stylesheet">
+    <style>
+      * {
+        margin: 0;
+        padding: 0;
+        box-sizing: border-box;
+      }
+      html, body {
+        width: 1920px;
+        height: 1080px;
+        overflow: hidden;
+        background: #000;
+        font-family: 'Inter', sans-serif;
+      }
+      
+      /* Base Scene Container */
+      .scene-content {
+        position: relative;
+        width: 100%;
+        height: 100%;
+      }
+      
+      /* Video Layer */
+      .video-layer {
+        position: absolute;
+        inset: 0;
+        z-index: 1;
+        overflow: hidden;
+      }
+      video {
+        width: 100%;
+        height: 100%;
+        object-fit: cover;
+        transform-origin: center center;
+        will-change: transform;
+      }
+      
+      /* Premium Captions Layer (Single Word Center-Bottom) */
+      .captions-layer {
+        position: absolute;
+        bottom: 120px; /* Anchored exactly at the center-bottom */
+        left: 0;
+        right: 0;
+        z-index: 3;
+        display: flex;
+        justify-content: center;
+        align-items: center;
+        pointer-events: none;
+      }
+      
+      .captions-container {
+        position: relative;
+        width: 1400px;
+        height: 250px;
+        display: flex;
+        justify-content: center;
+        align-items: center;
+      }
+      
+      .word {
+        position: absolute; /* Stack all words directly on top of each other */
+        opacity: 0;
+        text-align: center;
+        display: inline-block;
+        transform-origin: center center;
+        will-change: transform, opacity;
+        white-space: nowrap;
+      }
+
+      /* Clean San-Serif Caption style */
+      .word.sans {
+        font-family: 'Inter', sans-serif;
+        font-weight: 900;
+        font-size: 130px;
+        text-transform: uppercase;
+        color: #ffffff;
+        letter-spacing: -3px;
+        text-shadow: 0 10px 30px rgba(0,0,0,0.5);
+      }
+
+      /* Premium Cursive Script Highlight style */
+      .word.script {
+        font-family: 'Great Vibes', cursive;
+        font-size: 210px;
+        color: #ffffff;
+        text-transform: none; /* Cursive script shouldn't be all caps */
+        /* Subtle soft white diffused bloom */
+        text-shadow: 
+          0 0 25px rgba(255, 255, 255, 0.8), 
+          0 0 50px rgba(255, 255, 255, 0.4),
+          0 10px 30px rgba(0,0,0,0.5);
+      }
+      
+      /* UI Layer (Buttery smooth 60fps) */
+      .ui-layer {
+        position: absolute;
+        inset: 0;
+        z-index: 2;
+        pointer-events: none;
+      }
+      
+      /* Apple-style UI Glass Element (Premium Frosted Glass) */
+      .ui-glass {
+        position: absolute;
+        display: flex;
+        align-items: center;
+        justify-content: center;
+        background: rgba(255, 255, 255, 0.03);
+        backdrop-filter: blur(25px) saturate(180%);
+        -webkit-backdrop-filter: blur(25px) saturate(180%);
+        border: 1px solid rgba(255, 255, 255, 0.1);
+        border-top: 1px solid rgba(255, 255, 255, 0.25); /* Subtle top light reflection */
+        border-radius: 40px;
+        box-shadow: 
+          0 40px 100px rgba(0, 0, 0, 0.4), 
+          inset 0 1px 0 rgba(255, 255, 255, 0.1);
+        opacity: 0;
+        will-change: transform, opacity;
+      }
+      
+      /* Specifically for Claude Card */
+      #claude-ui {
+        top: 250px;
+        left: 200px;
+        width: 260px;
+        height: 260px;
+      }
+      
+      /* Specifically for Figma Card */
+      #figma-ui {
+        bottom: 250px;
+        right: 200px;
+        width: 260px;
+        height: 260px;
+      }
+      
+      .ui-glass img {
+        width: 140px;
+        height: 140px;
+      }
+      
+      /* Global Faint Film Grain Overlay */
+      .grain-overlay {
+        position: absolute;
+        inset: 0;
+        z-index: 4;
+        pointer-events: none;
+        opacity: 0.04; /* Very subtle film grain */
+        background-image: url('data:image/svg+xml,%3Csvg viewBox="0 0 200 200" xmlns="http://www.w3.org/2000/svg"%3E%3Cfilter id="noiseFilter"%3E%3CfeTurbulence type="fractalNoise" baseFrequency="0.9" numOctaves="4" stitchTiles="stitch"/%3E%3C/filter%3E%3Crect width="100%25" height="100%25" filter="url(%23noiseFilter)"/%3E%3C/svg%3E');
+      }
+    </style>
+  </head>
+  <body>
+    <div id="root" data-composition-id="main" data-start="0" data-duration="12" data-width="1920" data-height="1080">
+      <div class="scene-content">
+        
+        <!-- Background Video with dynamic push-ins -->
+        <div class="video-layer">
+          <video 
+            id="main-video" 
+            src="assets/Claude Design footage.mp4" 
+            data-start="0" 
+            data-duration="12" 
+            data-track-index="0"
+            muted playsinline>
+          </video>
+          <audio 
+            id="main-audio" 
+            src="assets/Claude Design footage.mp4" 
+            data-start="0" 
+            data-duration="12" 
+            data-track-index="1"
+            data-volume="1">
+          </audio>
+        </div>
+
+        <!-- Premium Center-Bottom Captions -->
+        <div class="captions-layer" data-layout-allow-overflow="true">
+          <div class="captions-container" id="captions-container"></div>
+        </div>
+
+        <!-- Premium Apple Glass UI Containers -->
+        <div class="ui-layer">
+          <div id="claude-ui" class="ui-glass clip" data-start="0" data-duration="4" data-track-index="2">
+            <img src="assets/claude-ai-icon.svg" alt="Claude AI" />
+          </div>
+          
+          <div id="figma-ui" class="ui-glass clip" data-start="7" data-duration="5" data-track-index="3">
+            <img src="assets/figma-icon.svg" alt="Figma" />
+          </div>
+        </div>
+        
+        <!-- Global Grain -->
+        <div class="grain-overlay"></div>
+
+      </div>
+    </div>
+
+    <script>
+      window.__timelines = window.__timelines || {};
+      const tl = gsap.timeline({ paused: true });
+      
+      // Standard lead offset (50ms before audio)
+      const AUDIO_OFFSET = -0.05; 
+
+      // Authoritative transcription timings derived directly from transcript.json (No hand-tuning)
+      const transcript = [
+  {
+    "id": "w0",
+    "text": "Claude",
+    "start": 0.099,
+    "end": 0.519
+  },
+  {
+    "id": "w1",
+    "text": "just",
+    "start": 0.62,
+    "end": 0.799
+  },
+  {
+    "id": "w2",
+    "text": "dropped",
+    "start": 0.839,
+    "end": 1.139
+  },
+  {
+    "id": "w3",
+    "text": "a",
+    "start": 1.199,
+    "end": 1.219
+  },
+  {
+    "id": "w4",
+    "text": "new",
+    "start": 1.339,
+    "end": 1.5
+  },
+  {
+    "id": "w5",
+    "text": "platform",
+    "start": 1.539,
+    "end": 2.279
+  },
+  {
+    "id": "w6",
+    "text": "that",
+    "start": 2.319,
+    "end": 2.579
+  },
+  {
+    "id": "w7",
+    "text": "fundamentally",
+    "start": 2.599,
+    "end": 3.299
+  },
+  {
+    "id": "w8",
+    "text": "changes",
+    "start": 3.359,
+    "end": 3.759
+  },
+  {
+    "id": "w9",
+    "text": "how",
+    "start": 3.819,
+    "end": 3.939
+  },
+  {
+    "id": "w10",
+    "text": "we",
+    "start": 3.959,
+    "end": 4.039
+  },
+  {
+    "id": "w11",
+    "text": "do",
+    "start": 4.079,
+    "end": 4.139
+  },
+  {
+    "id": "w12",
+    "text": "design",
+    "start": 4.219,
+    "end": 4.539
+  },
+  {
+    "id": "w13",
+    "text": "work.",
+    "start": 4.599,
+    "end": 4.799
+  },
+  {
+    "id": "w14",
+    "text": "And",
+    "start": 5.139,
+    "end": 5.219
+  },
+  {
+    "id": "w15",
+    "text": "if",
+    "start": 5.259,
+    "end": 5.379
+  },
+  {
+    "id": "w16",
+    "text": "you've",
+    "start": 5.38,
+    "end": 5.519
+  },
+  {
+    "id": "w17",
+    "text": "been",
+    "start": 5.539,
+    "end": 5.699
+  },
+  {
+    "id": "w18",
+    "text": "wondering",
+    "start": 5.779,
+    "end": 6.139
+  },
+  {
+    "id": "w19",
+    "text": "why",
+    "start": 6.219,
+    "end": 6.379
+  },
+  {
+    "id": "w20",
+    "text": "tools",
+    "start": 6.519,
+    "end": 6.799
+  },
+  {
+    "id": "w21",
+    "text": "like",
+    "start": 6.859,
+    "end": 6.98
+  },
+  {
+    "id": "w22",
+    "text": "Figma",
+    "start": 7.119,
+    "end": 7.44
+  },
+  {
+    "id": "w23",
+    "text": "are",
+    "start": 7.759,
+    "end": 7.919
+  },
+  {
+    "id": "w24",
+    "text": "under",
+    "start": 7.96,
+    "end": 8.28
+  },
+  {
+    "id": "w25",
+    "text": "immense",
+    "start": 8.479,
+    "end": 8.74
+  },
+  {
+    "id": "w26",
+    "text": "pressure",
+    "start": 8.84,
+    "end": 9.119
+  },
+  {
+    "id": "w27",
+    "text": "right",
+    "start": 9.159,
+    "end": 9.3
+  },
+  {
+    "id": "w28",
+    "text": "now,",
+    "start": 9.38,
+    "end": 9.519
+  },
+  {
+    "id": "w29",
+    "text": "this",
+    "start": 9.96,
+    "end": 10.18
+  },
+  {
+    "id": "w30",
+    "text": "is",
+    "start": 10.199,
+    "end": 10.3
+  },
+  {
+    "id": "w31",
+    "text": "exactly",
+    "start": 10.34,
+    "end": 10.82
+  },
+  {
+    "id": "w32",
+    "text": "why.",
+    "start": 10.84,
+    "end": 10.979
+  }
+];
+
+      const byId = id => transcript.find(w => w.id === id);
+      const styleById = {
+  "w0": "script",
+  "w1": "sans",
+  "w2": "sans",
+  "w3": "sans",
+  "w4": "sans",
+  "w5": "sans",
+  "w6": "sans",
+  "w7": "script",
+  "w8": "sans",
+  "w9": "sans",
+  "w10": "sans",
+  "w11": "sans",
+  "w12": "script",
+  "w13": "script",
+  "w14": "sans",
+  "w15": "sans",
+  "w16": "sans",
+  "w17": "sans",
+  "w18": "sans",
+  "w19": "sans",
+  "w20": "sans",
+  "w21": "sans",
+  "w22": "script",
+  "w23": "sans",
+  "w24": "sans",
+  "w25": "script",
+  "w26": "script",
+  "w27": "sans",
+  "w28": "sans",
+  "w29": "sans",
+  "w30": "sans",
+  "w31": "script",
+  "w32": "script"
+};
+
+
+      const container = document.getElementById('captions-container');
+      
+      // Render and Animate captions one-by-one in the exact center-bottom location
+      transcript.forEach(item => {
+        const span = document.createElement('span');
+        span.id = item.id;
+        span.className = `word ${styleById[item.id]}`;
+        span.textContent = item.text;
+        container.appendChild(span);
+        
+        // Sync timing adjusted with precise frame offset
+        const popTime = Math.max(0, item.start + AUDIO_OFFSET);
+        const hideTime = Math.max(0, item.end + AUDIO_OFFSET);
+        
+        // Ultra-snappy Apple-style spring entrance in-place
+        tl.fromTo(span, 
+          { scale: 0.8, opacity: 0, y: 10 },
+          { 
+            scale: 1.0, 
+            opacity: 1, 
+            y: 0,
+            duration: 0.12, /* Fast snapping entrance */
+            ease: "back.out(1.5)"
+          }, 
+          popTime
+        );
+        
+        // Clean quick exit right before next word triggers
+        tl.to(span, {
+          opacity: 0,
+          scale: 0.9,
+          duration: 0.06, /* Instantaneous snap-out */
+          ease: "power2.in"
+        }, hideTime);
+        
+        // Hard kill at the end to prevent stuck captions
+        tl.set(span, { opacity: 0, visibility: "hidden" }, hideTime + 0.06);
+      });
+
+      // --- UI Animations (Frosted Glass cards synced to corrected speech timing) ---
+      
+      // Claude Frosted Glass Card - pops *exactly* at start of "Claude" (w0) in transcript.json
+      tl.fromTo("#claude-ui",
+        { opacity: 0, y: 60, scale: 0.8, rotate: -5 },
+        {
+          opacity: 1,
+          y: 0,
+          scale: 1,
+          rotate: 0,
+          duration: 0.8,
+          ease: "back.out(1.2)"
+        }, 
+        Math.max(0, byId('w0').start + AUDIO_OFFSET)
+      );
+      
+      tl.to("#claude-ui", {
+        opacity: 0,
+        y: -40,
+        scale: 0.9,
+        duration: 0.4,
+        ease: "power3.inOut"
+      }, 3.5);
+
+      // Figma Frosted Glass Card - pops *exactly* at start of "Figma" (w22) in transcript.json
+      tl.fromTo("#figma-ui",
+        { opacity: 0, y: 60, scale: 0.8, rotate: 5 },
+        {
+          opacity: 1,
+          y: 0,
+          scale: 1,
+          rotate: 0,
+          duration: 0.8,
+          ease: "back.out(1.2)"
+        }, 
+        Math.max(0, byId('w22').start + AUDIO_OFFSET)
+      );
+      
+      tl.to("#figma-ui", {
+        opacity: 0,
+        y: -40,
+        scale: 0.9,
+        duration: 0.4,
+        ease: "power3.inOut"
+      }, 9.5);
+
+      // --- Video Layer Push-Ins (Gently pushing in on major beats) ---
+      const videoEl = document.querySelector('video');
+      
+      // Beat 0s: start at 1.0, slow push to 1.04
+      tl.fromTo(videoEl, 
+        { scale: 1.0 },
+        { scale: 1.04, duration: 2.3, ease: "power1.out" },
+        0
+      );
+
+      // Beat 2.3s ("fundamentally changes"): Snappy push to 1.12, slowly crawl to 1.15
+      tl.to(videoEl, {
+        scale: 1.12,
+        duration: 0.4,
+        ease: "back.out(1.1)"
+      }, 2.3);
+      
+      tl.to(videoEl, {
+        scale: 1.15,
+        duration: 3.3,
+        ease: "power1.out"
+      }, 2.7);
+
+      // Beat 5.6s ("And if you've"): scale back out cleanly to 1.03
+      tl.to(videoEl, {
+        scale: 1.03,
+        duration: 0.6,
+        ease: "power2.inOut"
+      }, 5.6);
+
+      // Beat 8.8s ("Figma"): Push in again to 1.09
+      tl.to(videoEl, {
+        scale: 1.09,
+        duration: 0.5,
+        ease: "back.out(1.2)"
+      }, 8.8);
+
+      tl.to(videoEl, {
+        scale: 1.11,
+        duration: 1.7,
+        ease: "power1.out"
+      }, 9.3);
+
+      // Register timeline
+      window.__timelines["main"] = tl;
+    </script>
+  </body>
+</html>
